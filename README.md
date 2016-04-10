@@ -30,7 +30,7 @@ History
 2016/04/10 - v3.1
   * Code moved to github
   * tlsfbits.h rolled into tlsf.c
-  * License changed to 
+  * License changed to BSD
 
 2014/02/08 - v3.0
   * This version is based on improvements from 3DInteractive GmbH
