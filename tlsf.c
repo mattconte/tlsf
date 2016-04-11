@@ -811,6 +811,7 @@ typedef struct integrity_t
 
 static void integrity_walker(void* ptr, size_t size, int used, void* user)
 {
+	(void)used;
 	block_header_t* block = block_from_ptr(ptr);
 	integrity_t* integ = tlsf_cast(integrity_t*, user);
 	const int this_prev_status = block_is_prev_free(block) ? 1 : 0;
@@ -926,22 +927,22 @@ int tlsf_check_pool(pool_t pool)
 ** Size of the TLSF structures in a given memory block passed to
 ** tlsf_create, equal to the size of a control_t
 */
-size_t tlsf_size()
+size_t tlsf_size(void)
 {
 	return sizeof(control_t);
 }
 
-size_t tlsf_align_size()
+size_t tlsf_align_size(void)
 {
 	return ALIGN_SIZE;
 }
 
-size_t tlsf_block_size_min()
+size_t tlsf_block_size_min(void)
 {
 	return block_size_min;
 }
 
-size_t tlsf_block_size_max()
+size_t tlsf_block_size_max(void)
 {
 	return block_size_max;
 }
@@ -951,12 +952,12 @@ size_t tlsf_block_size_max()
 ** tlsf_add_pool, equal to the overhead of a free block and the
 ** sentinel block.
 */
-size_t tlsf_pool_overhead()
+size_t tlsf_pool_overhead(void)
 {
 	return 2 * block_header_overhead;
 }
 
-size_t tlsf_alloc_overhead()
+size_t tlsf_alloc_overhead(void)
 {
 	return block_header_overhead;
 }
