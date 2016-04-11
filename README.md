@@ -21,7 +21,7 @@ Notes
 -----
 This code was based on the TLSF 1.4 spec and documentation found at:
 
-	http://rtportal.upv.es/rtmalloc/allocators/tlsf/index.shtml
+	http://www.gii.upv.es/tlsf/main/docs
 
 It also leverages the TLSF 2.0 improvement to shrink the per-block overhead from 8 to 4 bytes.
 
