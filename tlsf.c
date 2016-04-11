@@ -809,7 +809,7 @@ typedef struct integrity_t
 
 #define tlsf_insist(x) { tlsf_assert(x); if (!(x)) { status--; } }
 
-static void integrity_walker(void* ptr, size_t size, int /*used*/, void* user)
+static void integrity_walker(void* ptr, size_t size, int used, void* user)
 {
 	block_header_t* block = block_from_ptr(ptr);
 	integrity_t* integ = tlsf_cast(integrity_t*, user);
@@ -818,6 +818,7 @@ static void integrity_walker(void* ptr, size_t size, int /*used*/, void* user)
 	const size_t this_block_size = block_size(block);
 
 	int status = 0;
+	(void)used;
 	tlsf_insist(integ->prev_status == this_prev_status && "prev status incorrect");
 	tlsf_insist(size == this_block_size && "block size incorrect");
 
