@@ -7,7 +7,7 @@
 **	http://tlsf.baisoku.org
 **
 ** Based on the original documentation by Miguel Masmano:
-**	http://rtportal.upv.es/rtmalloc/allocators/tlsf/index.shtml
+**	http://www.gii.upv.es/tlsf/main/docs
 **
 ** This implementation was written to the specification
 ** of the document, therefore no GPL restrictions apply.
@@ -22,7 +22,7 @@
 **     * Redistributions in binary form must reproduce the above copyright
 **       notice, this list of conditions and the following disclaimer in the
 **       documentation and/or other materials provided with the distribution.
-**     * Neither the name of the <organization> nor the
+**     * Neither the name of the copyright holder nor the
 **       names of its contributors may be used to endorse or promote products
 **       derived from this software without specific prior written permission.
 ** 
