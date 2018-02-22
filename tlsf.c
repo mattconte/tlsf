@@ -758,7 +758,17 @@ static block_header_t* block_locate_free(control_t* control, size_t size)
 	if (size)
 	{
 		mapping_search(size, &fl, &sl);
-		block = search_suitable_block(control, &fl, &sl);
+		
+		/*
+		** mapping_search can futz with the size, so for excessively large sizes it can sometimes wind up 
+		** with indices that are off the end of the block array.
+		** So, we protect against that here, since this is the only callsite of mapping_search.
+		** Note that we don't need to check sl, since it comes from a modulo operation that guarantees it's always in range.
+		*/
+		if (fl < FL_INDEX_COUNT)
+		{
+			block = search_suitable_block(control, &fl, &sl);
+		}
 	}
 
 	if (block)
