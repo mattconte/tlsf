@@ -1,0 +1,35 @@
+pkg:
+  name: wlib-tlsf
+  description: TLSF memory allocator
+  repository: https://github.com/waterloop/wlib-tlsf.git
+  version: 1.0.0
+  author: Jeff Niu <jeffniu22@gmail.com> (https://github.com/mogball)
+  contributors: []
+  organization: Waterloop
+  keywords:
+  - wio
+  - c
+  - c++
+  - json
+  - waterloop
+  - memory
+  license: MIT
+  header_only: false
+  platform: ALL
+  framework:
+  - ALL
+  board:
+  - ALL
+  - uno
+  compile_flags: []
+  ide: none
+
+targets:
+  default: ""
+  create:
+    "":
+      board: uno
+      target_compile_flags: []
+      pkg_compile_flags: []
+
+dependencies: {}
