@@ -50,20 +50,20 @@ gcc 3.4 and above have builtin support, specialized for architecture.
 
 #if defined (__SNC__)
 // SNC for Playstation 3
-tlsf_decl int tlsf_ffs(unsigned int word) {
-    const unsigned int reverse = word & (~word + 1);
-    const int bit = 32 - __builtin_clz(reverse);
+tlsf_decl tlsf_int tlsf_ffs(tlsf_uint word) {
+    const tlsf_uint reverse = word & (~word + 1);
+    const tlsf_int bit = 32 - __builtin_clz(reverse);
     return bit - 1;
 }
 #else
 
-tlsf_decl int tlsf_ffs(unsigned int word) {
+tlsf_decl tlsf_int tlsf_ffs(tlsf_uint word) {
     return __builtin_ffs(word) - 1;
 }
 #endif
 
-tlsf_decl int tlsf_fls(unsigned int word) {
-    const int bit = word ? 32 - __builtin_clz(word) : 0;
+tlsf_decl tlsf_int tlsf_fls(tlsf_uint word) {
+    const tlsf_int bit = word ? 32 - __builtin_clz(word) : 0;
     return bit - 1;
 }
 
@@ -78,12 +78,12 @@ tlsf_decl int tlsf_fls(unsigned int word) {
 #pragma intrinsic(_BitScanReverse)
 #pragma intrinsic(_BitScanForward)
 
-tlsf_decl int tlsf_fls(unsigned int word) {
+tlsf_decl tlsf_int tlsf_fls(tlsf_uint word) {
     unsigned long index;
     return _BitScanReverse(&index, word) ? index : -1;
 }
 
-tlsf_decl int tlsf_ffs(unsigned int word) {
+tlsf_decl int tlsf_ffs(tlsf_uint word) {
     unsigned long index;
     return _BitScanForward(&index, word) ? index : -1;
 }
@@ -93,23 +93,23 @@ tlsf_decl int tlsf_ffs(unsigned int word) {
 
 #include <ppcintrinsics.h>
 
-tlsf_decl int tlsf_fls(unsigned int word) {
-    const int bit = 32 - _CountLeadingZeros(word);
+tlsf_decl tlsf_int tlsf_fls(tlsf_uint word) {
+    const tlsf_int bit = 32 - _CountLeadingZeros(word);
     return bit - 1;
 }
 
-tlsf_decl int tlsf_ffs(unsigned int word) {
-    const unsigned int reverse = word & (~word + 1);
-    const int bit = 32 - _CountLeadingZeros(reverse);
+tlsf_decl tlsf_int tlsf_ffs(tlsf_uint word) {
+    const tlsf_uint reverse = word & (~word + 1);
+    const tlsf_int bit = 32 - _CountLeadingZeros(reverse);
     return bit - 1;
 }
 
 #elif defined (__ARMCC_VERSION)
 // RealView Compilation Tools for ARM
 
-tlsf_decl int tlsf_ffs(unsigned int word) {
-    const unsigned int reverse = word & (~word + 1);
-    const int bit = 32 - __clz(reverse);
+tlsf_decl tlsf_int tlsf_ffs(tlsf_uint word) {
+    const tlsf_uint reverse = word & (~word + 1);
+    const tlsf_int bit = 32 - __clz(reverse);
     return bit - 1;
 }
 

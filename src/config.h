@@ -33,4 +33,16 @@ static_assert(WLIB_TLSF_LOG2_MAX >= 2, "Log2 max size must be at least 2");
 #endif
 #endif
 
+#include <stdint.h>
+
+#if defined(WLIB_TLSF_64BIT)
+typedef uint64_t tlsf_size_t
+typedef uint32_t tlsf_uint
+typedef int32_t  tlsf_int
+#else
+typedef uint32_t tlsf_size_t
+typedef uint32_t tlsf_uint
+typedef int32_t  tlsf_int
+#endif
+
 #endif

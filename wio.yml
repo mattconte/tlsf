@@ -25,11 +25,14 @@ pkg:
   ide: none
 
 targets:
-  default: ""
+  default: tests
   create:
-    "":
+    tests:
       board: uno
       target_compile_flags: []
-      pkg_compile_flags: []
+      pkg_compile_flags:
+      - -DWLIB_TLSF_LOG2_DIV=3
+      - -DWLIB_TLSF_LOG2_ALIGN=1
+      - -DWLIB_TLSF_LOG2_MAX=9
 
 dependencies: {}

@@ -6,3 +6,5 @@ bin/
 *.o
 *.obj
 *.exe
+.wio/
+
