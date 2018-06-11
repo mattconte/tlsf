@@ -38,6 +38,10 @@
 ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/**
+ * Modified by Jeff Niu (@mogball)
+ */
+
 #include <stddef.h>
 
 #if defined(__cplusplus)

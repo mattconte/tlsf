@@ -1,18 +1,11 @@
-#include <assert.h>
 #include <stddef.h>
-#include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 #include <tlsf.h>
-#include "internal.h"
 
-#if defined(__cplusplus)
-#define tlsf_decl inline
-#define tlsf_const constexpr
-#else
-#define tlsf_decl static
-#define tlsf_const const
-#endif
+#include "internal.h"
+#include "config.h"
 
 /*
 Architecture-specific bit manipulation routines.
@@ -36,23 +29,23 @@ ffs/fls return 1-32 by default, returning 0 for error.
 Detect whether or not we are building for a 32- or 64-bit (LP/LLP)
 architecture. There is no reliable portable method at compile-time.
 */
-#if defined (__alpha__) || \
-    defined (__ia64__) || \
+/*#if defined (__alpha__) ||  \
+    defined (__ia64__) ||   \
     defined (__x86_64__) || \
-    defined (_WIN64) || \
-    defined (__LP64__) || \
+    defined (_WIN64) ||     \
+    defined (__LP64__) ||   \
     defined (__LLP64__)
 #define TLSF_64BIT
-#endif
+#endif*/
 
 /*
 Some compilers masquerade as gcc; patchlevel test filters them out.
 gcc 3.4 and above have builtin support, specialized for architecture.
 */
-#if defined (__GNUC__) && \
-    (__GNUC__ > 3 || \
-    (__GNUC__ == 3 && \
-    __GNUC_MINOR__ >= 4)) && \
+#if defined (__GNUC__) &&       \
+    (__GNUC__ > 3 ||            \
+    (__GNUC__ == 3 &&           \
+    __GNUC_MINOR__ >= 4)) &&    \
     defined (__GNUC_PATCHLEVEL__)
 
 #if defined (__SNC__)
@@ -75,8 +68,8 @@ tlsf_decl int tlsf_fls(unsigned int word) {
 }
 
 #elif defined (_MSC_VER) && \
-    (_MSC_VER >= 1400) && \
-    (defined (_M_IX86) || \
+    (_MSC_VER >= 1400) &&   \
+    (defined (_M_IX86) ||   \
     defined (_M_X64))
 // Microsoft Visual C++ support on x86/X64 architectures
 
@@ -171,10 +164,10 @@ tlsf_decl int tlsf_fls(unsigned int word) {
 // Possibly 64-bit version of tlsf_fls
 #if defined (TLSF_64BIT)
 tlsf_decl int tlsf_fls_sizet(size_t size) {
-    int high = (int)(size >> 32);
+    int high = static_cast<int>(size >> 32);
     int bits = 0;
     if (high) { bits = 32 + tlsf_fls(high); }
-    else { bits = tlsf_fls((int)size & 0xffffffff); }
+    else { bits = tlsf_fls(static_cast<int>(size) & 0xffffffff); }
     return bits;
 }
 #else
@@ -193,20 +186,13 @@ enum tlsf_public {
     // values require more memory in the control structure. Values of
     // 3 to 5 are typical.
 
-    SL_INDEX_COUNT_LOG2 = 3,
+    SL_INDEX_COUNT_LOG2 = WLIB_TLSF_LOG2_DIV,
 };
 
 // Private constants
 enum tlsf_private {
-#if defined (TLSF_64BIT)
-    // All allocation sizes and addresses are aligned to 8 bytes
+    ALIGN_SIZE_LOG2 = WLIB_TLSF_LOG2_ALIGN,
 
-    ALIGN_SIZE_LOG2 = 3,
-#else
-    // All allocation sizes and addresses are aligned to 4 or 2 bytes
-
-    ALIGN_SIZE_LOG2 = 1,
-#endif
     ALIGN_SIZE = (1 << ALIGN_SIZE_LOG2),
 
     /*
@@ -220,11 +206,7 @@ enum tlsf_private {
     blocks below that size into the 0th first-level list.
     */
 
-#if defined (TLSF_64BIT)
-    FL_INDEX_MAX = 32,
-#else
-    FL_INDEX_MAX = 10,
-#endif
+    FL_INDEX_MAX = WLIB_TLSF_LOG2_MAX,
 
     SL_INDEX_COUNT = (1 << SL_INDEX_COUNT_LOG2),
     FL_INDEX_SHIFT = (SL_INDEX_COUNT_LOG2 + ALIGN_SIZE_LOG2),
@@ -232,22 +214,10 @@ enum tlsf_private {
     SMALL_BLOCK_SIZE = (1 << FL_INDEX_SHIFT),
 };
 
-/******************************************************
-* Cast, min, and max macros.
-******************************************************/
-#define tlsf_cast(t, exp)    ((t) (exp))
-#define tlsf_min(a, b)        ((a) < (b) ? (a) : (b))
-#define tlsf_max(a, b)        ((a) > (b) ? (a) : (b))
-
-// Set assert macro if not user provided
-#if !defined (tlsf_assert)
-#define tlsf_assert assert
-#endif
 
 /******************************************************
 * Static assert.
 ******************************************************/
-#define tlsf_static_assert(exp) static_assert(exp, "")
 
 // This code has been tested on 32- and 64-bit (LP/LLP) architectures
 tlsf_static_assert(sizeof(int) * CHAR_BIT == 32);
@@ -767,7 +737,7 @@ pool_t tlsf_add_pool(tlsf_t tlsf, void *mem, size_t bytes) {
     block_header_t *block;
     block_header_t *next;
 
-    const size_t pool_overhead = tlsf_pool_overhead();
+    tlsf_const size_t pool_overhead = 2 * block_header_overhead;
     const size_t pool_bytes = align_down(bytes - pool_overhead, ALIGN_SIZE);
 
     if (((ptrdiff_t) mem % ALIGN_SIZE) != 0) {
@@ -844,13 +814,12 @@ tlsf_t tlsf_create(void *mem) {
 
 tlsf_t tlsf_create_with_pool(void *mem, size_t bytes) {
     tlsf_t tlsf = tlsf_create(mem);
-    tlsf_add_pool(tlsf, (char *) mem + tlsf_size(), bytes - tlsf_size());
+    tlsf_add_pool(tlsf, (char *) mem + sizeof(control_t), bytes - sizeof(control_t));
     return tlsf;
 }
 
-void tlsf_destroy(tlsf_t tlsf) {
+void tlsf_destroy(tlsf_t) {
     // Nothing to do
-    (void) tlsf;
 }
 
 pool_t tlsf_get_pool(tlsf_t tlsf) {

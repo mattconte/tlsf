@@ -1,9 +1,10 @@
-#include <tlsf.h>
 #include <stdio.h>
 #include <string.h>
 
+#include <wlib/tlsf>
+
 enum {
-    POOL_SIZE = 1024
+    POOL_SIZE = 5000
 };
 
 static char s_pool[POOL_SIZE];
