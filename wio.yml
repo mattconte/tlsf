@@ -20,7 +20,6 @@ pkg:
   - ALL
   board:
   - ALL
-  - uno
   compile_flags: []
   ide: none
 
@@ -28,11 +27,12 @@ targets:
   default: tests
   create:
     tests:
-      board: uno
+      board: mega2560
       target_compile_flags: []
       pkg_compile_flags:
-      - -DWLIB_TLSF_LOG2_DIV=3
-      - -DWLIB_TLSF_LOG2_ALIGN=1
-      - -DWLIB_TLSF_LOG2_MAX=9
+      - -DWLIB_TLSF_32BIT
+      - -DWLIB_TLSF_LOG2_DIV=2
+      - -DWLIB_TLSF_LOG2_ALIGN=2
+      - -DWLIB_TLSF_LOG2_MAX=12
 
 dependencies: {}

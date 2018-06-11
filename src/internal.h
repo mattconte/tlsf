@@ -1,7 +1,7 @@
 #ifndef __WLIB_TLSF_INTERNAL_H__
 #define __WLIB_TLSF_INTERNAL_H__
 
-#define DEBUG_LEVEL 2
+#define DEBUG_LEVEL 0
 
 #if DEBUG_LEVEL >= 2
 #include <stdio.h>
@@ -20,8 +20,6 @@
 #define tlsf_decl static
 #define tlsf_const const
 #endif
-
-#define tlsf_static_assert(exp) static_assert(exp, "")
 
 #define tlsf_cast(t, exp)     ((t) (exp))
 #define tlsf_min(a, b)        ((a) < (b) ? (a) : (b))

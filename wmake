@@ -1,0 +1,91 @@
+#!/bin/bash
+#!/usr/bin/env bash
+
+set -o errexit
+trap 'echo "Aborting due to errexit on line $LINENO. Exit code: $?" >&2' ERR
+set -o errtrace
+set -o pipefail
+DEFAULT_IFS="${IFS}"
+SAFER_IFS=$'\n\t'
+IFS="${SAFER_IFS}"
+_ME=$(basename "${0}")
+
+_print_help() {
+  cat <<HEREDOC
+                 __               .__
+__  _  _______ _/  |_  ___________|  |   ____   ____ ______
+\\ \\/ \\/ /\\__  \\\\   __\\/ __ \\_  __ \\  |  /  _ \\ /  _ \\\\____ \\
+ \\     /  / __ \\|  | \\  ___/|  | \\/  |_(  <_> |  <_> )  |_> >
+  \\/\\_/  (____  /__|  \\___  >__|  |____/\\____/ \\____/|   __/
+              \\/          \\/                         |__|
+
+The Embedded C++ code base builder
+
+HEREDOC
+}
+
+_build(){
+    mkdir -p cmake-build-debug
+    cd cmake-build-debug
+    echo "Running CMake"
+    cmake ..
+    echo "Running Make"
+    make
+    echo "Project Built"
+    cd ..
+}
+
+_clean(){
+    if [ -d "cmake-build-debug" ] ; then
+        cd cmake-build-debug
+        make clean
+    fi
+}
+
+_reset() {
+    rm -rf cmake-build-debug
+}
+
+_run() {
+    ./cmake-build-debug/unit
+}
+
+_test() {
+    _build
+    _run
+}
+
+_simple() {
+    root_dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+    root_dir_name=$(basename "$root_dir")
+    cd "$root_dir"
+
+    if [ "$1" == 'build' ] ; then
+        echo "Building project"
+        _build
+    elif [ "$1" == 'clean' ] ; then
+        echo "Cleaning project"
+        _clean
+    elif [ "$1" == 'reset' ] ; then
+        echo "Resetting project"
+        _reset
+    elif [ "$1" == 'run' ] ; then
+        _run
+    elif [ "$1" == 'test' ] ; then
+        _test
+    else
+        _print_help
+    fi
+}
+
+_main() {
+  # Avoid complex option parsing when only one program option is expected.
+  if [[ "${1:-}" =~ ^-h|--help$  ]] || [ $# -lt "1" ]
+  then
+    _print_help
+  else
+    _simple "$@"
+  fi
+}
+
+_main "$@"
