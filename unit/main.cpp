@@ -4,7 +4,7 @@
 #include <wlib/tlsf>
 
 enum {
-    POOL_SIZE = 5000
+    POOL_SIZE = 520
 };
 
 static char s_pool[POOL_SIZE];
