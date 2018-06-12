@@ -20,6 +20,7 @@ pkg:
   - ALL
   board:
   - ALL
+  - mega2560
   compile_flags: []
   ide: none
 
@@ -33,6 +34,8 @@ targets:
       - -DWLIB_TLSF_32BIT
       - -DWLIB_TLSF_LOG2_DIV=2
       - -DWLIB_TLSF_LOG2_ALIGN=2
-      - -DWLIB_TLSF_LOG2_MAX=12
+      - -DWLIB_TLSF_LOG2_MAX=10
+      - -DWLIB_TLSF_PRINTF
+      - -DWLIB_TLSF_ASSERT
 
 dependencies: {}

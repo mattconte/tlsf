@@ -3,11 +3,8 @@
 
 #include <wlib/tlsf>
 
-enum {
-    POOL_SIZE = 520
-};
-
-static char s_pool[POOL_SIZE];
+static char s_instance[512];
+static char s_pool[2048];
 
 struct data {
     int ival;
@@ -27,7 +24,8 @@ int main(int argc, char *argv[]) {
     printf("pool overhead: %lu\n", tlsf_pool_overhead());
     printf("alloc overhead: %lu\n", tlsf_alloc_overhead());
 
-    tlsf_t instance = tlsf_create_with_pool(s_pool, POOL_SIZE);
+    tlsf_t instance = tlsf_create(s_instance);
+    pool_t pool = tlsf_add_pool(instance, s_pool, 540);
 
     auto pData = static_cast<data *>(tlsf_malloc(instance, sizeof(data)));
     pData->ival = -672645;

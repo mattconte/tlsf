@@ -1,10 +1,11 @@
 #include "config.h"
 
-#if defined (__GNUC__) &&       \
-    (__GNUC__ > 3 ||            \
-    (__GNUC__ == 3 &&           \
-    __GNUC_MINOR__ >= 4)) &&    \
-    defined (__GNUC_PATCHLEVEL__)
+#if defined (__GNUC__) &&           \
+    (__GNUC__ > 3 ||                \
+    (__GNUC__ == 3 &&               \
+    __GNUC_MINOR__ >= 4)) &&        \
+    defined (__GNUC_PATCHLEVEL__)   \
+    && !defined(WLIB_TLSF_16BIT) && 0
 
 #if defined (__SNC__)
 // SNC for Playstation 3

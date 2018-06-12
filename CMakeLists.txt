@@ -20,7 +20,7 @@ target_compile_definitions(wlib-tlsf PRIVATE
     WLIB_TLSF_32BIT
     WLIB_TLSF_LOG2_DIV=2
     WLIB_TLSF_LOG2_ALIGN=2
-    WLIB_TLSF_LOG2_MAX=12
+    WLIB_TLSF_LOG2_MAX=10
     )
 
 file(GLOB_RECURSE TEST_FILES
