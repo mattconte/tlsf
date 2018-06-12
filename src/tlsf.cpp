@@ -123,7 +123,7 @@ static void *block_to_ptr(const block_header_t *block) {
 
 /* Return location of next block after block of given size. */
 static block_header_t *offset_to_block(const void *ptr, tlsf_size_t size) {
-    return tlsf_cast(block_header_t*, tlsf_cast(tlsfptr_t, ptr) + size);
+    return tlsf_cast(block_header_t*, tlsf_cast(tlsf_ptr_t, ptr) + size);
 }
 
 /* Return location of previous block. */
@@ -172,11 +172,11 @@ static tlsf_size_t align_down(tlsf_size_t x, tlsf_size_t align) {
 }
 
 static void *align_ptr(const void *ptr, tlsf_size_t align) {
-    tlsf_verbose("Aligning 0x%08x\n", tlsf_cast(tlsfptr_t, ptr));
+    tlsf_verbose("Aligning 0x%08x\n", tlsf_cast(tlsf_ptr_t, ptr));
     tlsf_verbose("Alignment %u\n", align);
 
-    const tlsfptr_t aligned =
-        (tlsf_cast(tlsfptr_t, ptr) + (align - 1)) & ~(align - 1);
+    const tlsf_ptr_t aligned =
+        (tlsf_cast(tlsf_ptr_t, ptr) + (align - 1)) & ~(align - 1);
     tlsf_assert(0 == (align & (align - 1)), "must align to a power of two");
     return tlsf_cast(void*, aligned);
 }
@@ -294,9 +294,9 @@ static void insert_free_block(control_t *control, block_header_t *block, tlsf_in
     current->prev_free = block;
 
 
-    tlsf_verbose("Block located at 0x%08x\n", tlsf_cast(tlsfptr_t, block));
-    tlsf_verbose("Block to ptr: 0x%08x\n", tlsf_cast(tlsfptr_t, block_to_ptr(block)));
-    tlsf_verbose("Align ptr:    0x%08x\n", tlsf_cast(tlsfptr_t, align_ptr(block_to_ptr(block), ALIGN_SIZE)));
+    tlsf_verbose("Block located at 0x%08x\n", tlsf_cast(tlsf_ptr_t, block));
+    tlsf_verbose("Block to ptr: 0x%08x\n", tlsf_cast(tlsf_ptr_t, block_to_ptr(block)));
+    tlsf_verbose("Align ptr:    0x%08x\n", tlsf_cast(tlsf_ptr_t, align_ptr(block_to_ptr(block), ALIGN_SIZE)));
 
     tlsf_assert(block_to_ptr(block) == align_ptr(
         block_to_ptr(block),
@@ -530,7 +530,7 @@ size_t tlsf_alloc_overhead(void) {
 }
 
 pool_t tlsf_add_pool(tlsf_t tlsf, void *mem, size_t bytes) {
-    tlsf_verbose("Adding memory pool 0x%08x\n", tlsf_cast(tlsfptr_t, mem));
+    tlsf_verbose("Adding memory pool 0x%08x\n", tlsf_cast(tlsf_ptr_t, mem));
     tlsf_verbose("Pool size %u\n", tlsf_cast(tlsf_uint_t, bytes));
 
     block_header_t *block;
@@ -561,9 +561,9 @@ pool_t tlsf_add_pool(tlsf_t tlsf, void *mem, size_t bytes) {
     */
     tlsf_verbose("Block header overhead: %u\n", block_header_overhead);
 
-    block = offset_to_block(mem, tlsf_cast(tlsf_size_t, -tlsf_cast(tlsfptr_t, block_header_overhead)));
+    block = offset_to_block(mem, tlsf_cast(tlsf_size_t, -tlsf_cast(tlsf_ptr_t, block_header_overhead)));
 
-    tlsf_verbose("Acquired block 0x%08x\n", tlsf_cast(tlsfptr_t, block));
+    tlsf_verbose("Acquired block 0x%08x\n", tlsf_cast(tlsf_ptr_t, block));
 
     block_set_size(block, pool_bytes);
 
@@ -608,11 +608,11 @@ void tlsf_remove_pool(tlsf_t tlsf, pool_t pool) {
 * TLSF main interface.
 *************************************************/
 tlsf_t tlsf_create(void *mem) {
-    tlsf_verbose("Creating TLSF at 0x%08x\n", tlsf_cast(tlsfptr_t, mem));
+    tlsf_verbose("Creating TLSF at 0x%08x\n", tlsf_cast(tlsf_ptr_t, mem));
     tlsf_verbose("FL_INDEX_MAX: %i\n", FL_INDEX_MAX);
     tlsf_verbose("SL_INDEX_COUNT: %i\n", SL_INDEX_COUNT);
 
-    if ((tlsf_cast(tlsfptr_t, mem) % ALIGN_SIZE) != 0) {
+    if ((tlsf_cast(tlsf_ptr_t, mem) % ALIGN_SIZE) != 0) {
         tlsf_printf(
             "tlsf_create: Memory must be aligned to %u bytes.\n",
             tlsf_cast(tlsf_uint_t, ALIGN_SIZE)
@@ -676,7 +676,7 @@ void *tlsf_memalign(tlsf_t tlsf, size_t align, size_t size) {
         void *aligned = align_ptr(ptr, align);
         tlsf_size_t gap = tlsf_cast(
             tlsf_size_t,
-            tlsf_cast(tlsfptr_t, aligned) - tlsf_cast(tlsfptr_t, ptr));
+            tlsf_cast(tlsf_ptr_t, aligned) - tlsf_cast(tlsf_ptr_t, ptr));
 
         // If gap size is too small, offset to next aligned boundary
         if (gap && gap < gap_minimum) {
@@ -684,12 +684,12 @@ void *tlsf_memalign(tlsf_t tlsf, size_t align, size_t size) {
             const tlsf_size_t offset = tlsf_max(gap_remain, align);
             const void *next_aligned = tlsf_cast(
                 void*,
-                tlsf_cast(tlsfptr_t, aligned) + offset);
+                tlsf_cast(tlsf_ptr_t, aligned) + offset);
 
             aligned = align_ptr(next_aligned, align);
             gap = tlsf_cast(
                 tlsf_size_t,
-                tlsf_cast(tlsfptr_t, aligned) - tlsf_cast(tlsfptr_t, ptr));
+                tlsf_cast(tlsf_ptr_t, aligned) - tlsf_cast(tlsf_ptr_t, ptr));
         }
 
         if (gap) {

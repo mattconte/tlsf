@@ -50,17 +50,17 @@ static_assert(WLIB_TLSF_LOG2_MAX >= 2, "Log2 max size must be at least 2");
 
 #if defined(WLIB_TLSF_64BIT)
 typedef uint64_t tlsf_size_t;
-typedef int64_t  tlsfptr_t;
+typedef int64_t  tlsf_ptr_t;
 typedef uint32_t tlsf_uint_t;
 typedef int32_t  tlsf_int_t;
 #elif defined(WLIB_TLSF_16BIT)
-typedef uint32_t tlsf_size_t;
-typedef int32_t  tlsfptr_t;
+typedef uint16_t tlsf_size_t;
+typedef int16_t  tlsf_ptr_t;
 typedef uint16_t tlsf_uint_t;
 typedef int16_t  tlsf_int_t;
 #else
-typedef uint64_t tlsf_size_t;
-typedef int64_t  tlsfptr_t;
+typedef uint32_t tlsf_size_t;
+typedef int32_t  tlsf_ptr_t;
 typedef uint32_t tlsf_uint_t;
 typedef int32_t  tlsf_int_t;
 #endif
@@ -91,12 +91,14 @@ FL_INDEX_MAX
 #include <limits.h>
 
 static_assert(sizeof(tlsf_uint_t) * CHAR_BIT >= SL_INDEX_COUNT, "Subdivision size is too large");
-static_assert(ALIGN_SIZE == MIN_BLOCK_SIZE / SL_INDEX_COUNT, "Inproper size tuning");
+static_assert(ALIGN_SIZE == MIN_BLOCK_SIZE / SL_INDEX_COUNT, "Improper size tuning");
 
 #if defined(__cplusplus)
 #define tlsf_decl inline
 #else
 #define tlsf_decl static
 #endif
+
+#define ARCH_BITS (sizeof(tlsf_int_t) * CHAR_BIT)
 
 #endif

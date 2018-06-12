@@ -6,21 +6,22 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
-set(TLSF_FILES
-    include/tlsf.h
+file(GLOB_RECURSE TLSF_FILES
+    src/*.h
+    src/*.cpp
+
     include/wlib/tlsf
-    src/config.h
-    src/internal.h
-    src/tlsf.cpp
+    include/tlsf.h
     )
 
 add_library(wlib-tlsf ${TLSF_FILES})
 target_include_directories(wlib-tlsf PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
 target_compile_definitions(wlib-tlsf PRIVATE
-    WLIB_TLSF_32BIT
-    WLIB_TLSF_LOG2_DIV=2
-    WLIB_TLSF_LOG2_ALIGN=2
-    WLIB_TLSF_LOG2_MAX=10
+    WLIB_TLSF_64BIT
+    WLIB_TLSF_LOG2_DIV=3
+    WLIB_TLSF_LOG2_ALIGN=3
+    WLIB_TLSF_LOG2_MAX=12
+    WLIB_TLSF_ASSERT
     )
 
 file(GLOB_RECURSE TEST_FILES

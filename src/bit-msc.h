@@ -1,9 +1,8 @@
+#ifndef __WLIB_TLSF_BITMSC_H__
+#define __WLIB_TLSF_BITMSC_H__
+
 #include "config.h"
 
-#if defined (_MSC_VER) &&   \
-    (_MSC_VER >= 1400) &&   \
-    (defined (_M_IX86) ||   \
-    defined (_M_X64))
 // Microsoft Visual C++ support on x86/X64 architectures
 
 #include <intrin.h>
@@ -13,13 +12,14 @@
 
 tlsf_decl tlsf_int_t tlsf_fls(tlsf_uint_t word) {
     unsigned long index;
-    return _BitScanReverse(&index, word) ? index : -1;
+    unsigned char bsr = _BitScanReverse(&index, word);
+    return bsr ? tlsf_cast(tlsf_int_t, index) : -1;
 }
 
 tlsf_decl tlsf_int_t tlsf_ffs(tlsf_uint_t word) {
     unsigned long index;
-    return _BitScanForward(&index, word) ? index : -1;
+    unsigned char bsf = _BitScanForward(&index, word);
+    return bsf ? tlsf_cast(tlsf_int_t, index) : -1;
 }
 
-#define FFS_DETECT
 #endif

@@ -48,28 +48,32 @@
 extern "C" {
 #endif
 
-// tlsf_t: a TLSF structure. Can contain 1 to N pools
-// pool_t: a block of memory that TLSF can manage
+// TLSF control structure reference
 typedef void *tlsf_t;
+// TLSF memory pool reference
 typedef void *pool_t;
 
-// Create/destroy a memory pool
+// Create TLSF controller
 tlsf_t tlsf_create(void *mem);
+// Create TLSF controller with a memory pool
 tlsf_t tlsf_create_with_pool(void *mem, size_t bytes);
+// Destroy a TLSF controller
 void tlsf_destroy(tlsf_t tlsf);
+// Get pool corresponding to TLSF controller
 pool_t tlsf_get_pool(tlsf_t tlsf);
 
-// Add/remove memory pools
+// Add a memory pool to a TLSF controller
 pool_t tlsf_add_pool(tlsf_t tlsf, void *mem, size_t bytes);
+// Remove a pool from the TLSF controller
 void tlsf_remove_pool(tlsf_t tlsf, pool_t pool);
 
-// malloc/memalign/realloc/free replacements
+// Standard interface API
 void *tlsf_malloc(tlsf_t tlsf, size_t bytes);
 void *tlsf_memalign(tlsf_t tlsf, size_t align, size_t bytes);
 void *tlsf_realloc(tlsf_t tlsf, void *ptr, size_t size);
 void tlsf_free(tlsf_t tlsf, void *ptr);
 
-// Returns internal block size, not original request size
+// Returns internal block size associated with a pointer
 size_t tlsf_block_size(void *ptr);
 
 // Overheads/limits of internal structures
