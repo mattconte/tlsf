@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 #include <wlib/tlsf>
 
@@ -11,6 +12,18 @@ struct data {
     double fval;
     char strval[32];
 };
+
+struct int128 {
+    int64_t first;
+    int64_t second;
+};
+
+void tlsf_assert(bool expr, const char *msg) {
+    if (!expr) {
+        printf("%s\n", msg);
+
+    }
+}
 
 static void print_data(data *pData) {
     printf("ival: %i\nfval: %f\nstrval: %s\n",
@@ -33,6 +46,19 @@ int main(int argc, char *argv[]) {
     strcpy(pData->strval, string);
     print_data(pData);
     tlsf_free(instance, pData);
+
+    void *data512 = tlsf_malloc(instance, 512);
+    if (!data512) { return -1; }
+    tlsf_free(instance, data512);
+
+    static int128 *data128[32] = {nullptr};
+    for (int i = 0; i < 32; ++i) {
+        data128[i] = static_cast<int128 *>(tlsf_malloc(instance, sizeof(int128)));
+        if (!data128[i]) { return -1; }
+    }
+    for (int i = 0; i < 32; ++i) {
+        tlsf_free(instance, data128[i]);
+    }
 
     tlsf_destroy(instance);
 }

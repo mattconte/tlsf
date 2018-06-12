@@ -1,7 +1,7 @@
 #ifndef __WLIB_TLSF_INTERNAL_H__
 #define __WLIB_TLSF_INTERNAL_H__
 
-#define DEBUG_LEVEL 2
+#define DEBUG_LEVEL 1
 
 #if DEBUG_LEVEL >= 2
 #define tlsf_verbose(...) tlsf_printf(__VA_ARGS__)
