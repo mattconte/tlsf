@@ -1,13 +1,30 @@
 #ifndef __WLIB_TLSF_INTERNAL_H__
 #define __WLIB_TLSF_INTERNAL_H__
 
-#define DEBUG_LEVEL 0
+#define DEBUG_LEVEL 2
 
 #if DEBUG_LEVEL >= 2
+#define tlsf_verbose(...) tlsf_printf(__VA_ARGS__)
+#else
+#define tlsf_verbose(...)
+#endif
+
+#if DEBUG_LEVEL >= 1
+
+#ifdef WLIB_TLSF_PRINTF
+extern void tlsf_printf(const char *fmt, ...);
+#else
 #include <stdio.h>
-#define dprintf(...) printf(__VA_ARGS__)
+#define tlsf_printf(...) printf(__VA_ARGS__)
+#endif
+
+#ifdef WLIB_TLSF_ASSERT
+extern void tlsf_assert(bool expr, const char *msg);
+#else
 #include <assert.h>
-#define tlsf_assert(...) assert(__VA_ARGS__)
+#define tlsf_assert(expr, msg) assert(expr && msg)
+#endif
+
 #else
 #define dprintf(...)
 #define tlsf_assert(...)
