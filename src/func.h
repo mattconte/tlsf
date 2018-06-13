@@ -61,7 +61,7 @@ static block_header_t *block_next(const block_header_t *block) {
     char *start = tlsf_cast(char *, block);
     start += BLOCK_HDR_SIZE + block_size(block);
     block_header_t *next = tlsf_cast(block_header_t *, start);
-    tlsf_assert(!block_is_last(next), "Next block cannot be last");
+    tlsf_assert(!block_is_last(block), "Next block cannot be last");
     return next;
 }
 static block_header_t *block_link_next(block_header_t *block) {

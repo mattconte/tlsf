@@ -1,15 +1,17 @@
 #ifndef __WLIB_TLSF_INTERNAL_H__
 #define __WLIB_TLSF_INTERNAL_H__
 
-#define DEBUG_LEVEL 1
+#ifndef WLIB_TLSF_DEBUG_LEVEL
+#define WLIB_TLSF_DEBUG_LEVEL 0
+#endif
 
-#if DEBUG_LEVEL >= 2
+#if WLIB_TLSF_DEBUG_LEVEL >= 2
 #define tlsf_verbose(...) tlsf_printf(__VA_ARGS__)
 #else
 #define tlsf_verbose(...)
 #endif
 
-#if DEBUG_LEVEL >= 1
+#if WLIB_TLSF_DEBUG_LEVEL >= 1
 
 #ifdef WLIB_TLSF_PRINTF
 extern void tlsf_printf(const char *fmt, ...);
