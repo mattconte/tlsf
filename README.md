@@ -1,92 +1,87 @@
-# tlsf
-Two-Level Segregated Fit memory allocator implementation.
-Written by Matthew Conte (matt@baisoku.org).
-Released under the BSD license.
+# WLib TLSF
 
-Features
---------
-  * O(1) cost for malloc, free, realloc, memalign
-  * Extremely low overhead per allocation (4 bytes)
-  * Low overhead per TLSF management of pools (~3kB)
-  * Low fragmentation
-  * Compiles to only a few kB of code and data
-  * Support for adding and removing memory pool regions on the fly
+Two-level segregated-fit memory allocator package for WLib. Allocator created by Matthew Conte.
 
-Caveats
--------
-  * Currently, assumes architecture can make 4-byte aligned accesses
-  * Not designed to be thread safe; the user must provide this
+Modified API for WLib.
 
-Notes
------
-This code was based on the TLSF 1.4 spec and documentation found at:
+# API Usage
 
-	http://www.gii.upv.es/tlsf/main/docs
+The documentation is a little lacking on initialization but you essentially
+pass a memory pool for TLSF to manage.
 
-It also leverages the TLSF 2.0 improvement to shrink the per-block overhead from 8 to 4 bytes.
+```c++
+enum { STATIC_POOL_SIZE = 1 << 20 };
+static char s_pool[STATIC_POOL_SIZE];
 
-History
--------
-2016/04/10 - v3.1
-  * Code moved to github
-  * tlsfbits.h rolled into tlsf.c
-  * License changed to BSD
+tlsf_t instance = tlsf_create_with_pool(s_pool, STATIC_POOL_SIZE);
 
-2014/02/08 - v3.0
-  * This version is based on improvements from 3DInteractive GmbH
-  * Interface changed to allow more than one memory pool
-  * Separated pool handling from control structure (adding, removing, debugging)
-  * Control structure and pools can still be constructed in the same memory block
-  * Memory blocks for control structure and pools are checked for alignment
-  * Added functions to retrieve control structure size, alignment size, min and max block size, overhead of pool structure, and overhead of a single allocation
-  * Minimal Pool size is tlsf_block_size_min() + tlsf_pool_overhead()
-  * Pool must be empty when it is removed, in order to allow O(1) removal
+void *data = tlsf_malloc(instance, 64);
+tlsf_free(instance, data);
+```
 
-2011/10/20 - v2.0
-  * 64-bit support
-  * More compiler intrinsics for ffs/fls
-  * ffs/fls verification during TLSF creation in debug builds
+# Configuration
+Three main flags are used to control the operation of the TLSF.
 
-2008/04/04 - v1.9
-  * Add tlsf_heap_check, a heap integrity check
-  * Support a predefined tlsf_assert macro
-  * Fix realloc case where block should shrink; if adjacent block is in use, execution would go down the slow path
+#### `WLIB_TLSF_LOG2_DIV`
+Log of the number of subdivisions within a size class. Larger values
+introduce more overhead to the TLSF structure but reduce fragmentation.
+Values should be at least 2. Typical values up to 5.
 
-2007/02/08 - v1.8
-  * Fix for unnecessary reallocation in tlsf_realloc
+#### `WLIB_TLSF_LOG2_ALIGN`
+Log of the alignment of memory and blocks. E.g. a value of 2 aligns to
+4 bytes. The alignment must be at least the architecture alignment;
+that is, 2 bytes for 16-bit, 4 bytes for 32-bit, and 8 bytes for 64-bit.
 
-2007/02/03 - v1.7
-  * tlsf_heap_walk takes a callback
-  * tlsf_realloc now returns NULL on failure
-  * tlsf_memalign optimization for 4-byte alignment
-  * Usage of size_t where appropriate
+Larger values may be used to align to page boundaries.
 
-2006/11/21 - v1.6
-  * ffs/fls broken out into tlsfbits.h
-  * tlsf_overhead queries per-pool overhead
+#### `WLIB_TLSF_LOG2_MAX`
+Log of the maximum possible allocation size. This value directly affects
+the maximum pool size that can be managed by TLSF. Increasing it,
+however, will increase overhead.
 
-2006/11/07 - v1.5
-  * Smart realloc implementation
-  * Smart memalign implementation
+#### Specify Architecture
+One of `WLIB_TLSF_16BIT`, `WLIB_TLSF_32BIT`, or `WLIB_TLSF_64BIT` must
+be specified to select the architecture. TLSF attempts to dectect the
+specific architecture to use builtins, but these can be specified as
 
-2006/10/11 - v1.4
-  * Add some ffs/fls implementations
-  * Minor code footprint reduction
+- `WLIB_TLSF_ARM`
+- `WLIB_TLSF_GHS`
+- `WLIB_TLSF_GNU`
+- `WLIB_TLSF_MSC`
+- `WLIB_TLSF_PPC`
+- `WLIB_TLSF_SNC`
 
-2006/09/14 - v1.3
-  * Profiling indicates heavy use of blocks of size 1-128, so implement small block handling
-  * Reduce pool overhead by about 1kb
-  * Reduce minimum block size from 32 to 12 bytes
-  * Realloc bug fix
+If none is specified or autodetection fails, TLSF falls back to a 
+generic implementation of CLZ.
 
-2006/09/09 - v1.2
-  * Add tlsf_block_size
-  * Static assertion mechanism for invariants
-  * Minor bugfixes 
+## Debugging
+The flag `WLIB_TLSF_DEBUG_LEVEL` specifies the amount of printing and
+run-time assertions. A value of `0` turns all off, a value of `1` will
+print errors and run asserts, and a value of `2` will print some
+verbose output.
 
-2006/09/01 - v1.1
-  * Add tlsf_realloc
-  * Add tlsf_walk_heap
+Custom assert and print handlers can be implemented by defining
+`WLIB_TLSF_ASSERT` and `WLIB_TLSF_PRINTF` and then providing the functions
 
-2006/08/25 - v1.0
-  * First release
+```c
+void tlsf_printf(const char *fmt, ...) 
+{ /* ... */ }
+
+void tlsf_assert(bool expr, const char *msg)
+{ /* ... */ }
+```
+
+## Usage on AVR
+Recommended settings are
+
+```yaml
+pkg_compile_flags:
+- -DWLIB_TLSF_16BIT
+- -DWLIB_TLSF_LOG2_DIV=2
+- -DWLIB_TLSF_LOG2_ALIGN=1
+- -DWLIB_TLSF_LOG2_MAX=10
+- -DWLIB_TLSF_PRINTF
+- -DWLIB_TLSF_ASSERT
+```
+
+For boards will limited RAM.
