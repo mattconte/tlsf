@@ -101,7 +101,7 @@ static_assert(ALIGN_SIZE == MIN_BLOCK_SIZE / SL_INDEX_COUNT, "Improper size tuni
 
 #define ARCH_BITS (sizeof(tlsf_int_t) * CHAR_BIT)
 
-static_assert(ARCH_BITS == (1 << ALIGN_SIZE_LOG2) * CHAR_BIT, "Alignment must be to architecture");
+static_assert(sizeof(void *) == (1 << ALIGN_SIZE_LOG2), "Alignment must be to architecture");
 static_assert(sizeof(tlsf_size_t) == sizeof(tlsf_ptr_t), "size_t and ptrdiff_t must be the same");
 static_assert(sizeof(tlsf_size_t) == sizeof(void *), "size_t must be the size of pointers");
 

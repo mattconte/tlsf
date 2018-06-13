@@ -28,7 +28,7 @@ extern void tlsf_assert(bool expr, const char *msg);
 #endif
 
 #else
-#define dprintf(...)
+#define tlsf_printf(...)
 #define tlsf_assert(...)
 #endif
 
