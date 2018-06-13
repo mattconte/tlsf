@@ -26,12 +26,12 @@ static void print_data(data *pData) {
 int main(int argc, char *argv[]) {
     static char string[] = "Hello World";
 
-    printf("control_t size: %u\n", tlsf_size());
-    printf("pool overhead: %u\n", tlsf_pool_overhead());
-    printf("alloc overhead: %u\n", tlsf_alloc_overhead());
+    printf("control_t size: %u\n", static_cast<unsigned int>(tlsf_size()));
+    printf("pool overhead: %u\n", static_cast<unsigned int>(tlsf_pool_overhead()));
+    printf("alloc overhead: %u\n", static_cast<unsigned int>(tlsf_alloc_overhead()));
 
     tlsf_t instance = tlsf_create(s_instance);
-    pool_t pool = tlsf_add_pool(instance, s_pool, 1024);
+    pool_t pool = tlsf_add_pool(instance, s_pool, 2048);
 
     auto pData = static_cast<data *>(tlsf_malloc(instance, sizeof(data)));
     pData->ival = -672645;
@@ -45,12 +45,12 @@ int main(int argc, char *argv[]) {
     tlsf_free(instance, data512);
 
     static int128 *data128[32] = {nullptr};
-    for (int i = 0; i < 32; ++i) {
-        data128[i] = static_cast<int128 *>(tlsf_malloc(instance, sizeof(int128)));
-        if (!data128[i]) { return -1; }
+    for (auto &i : data128) {
+        i = static_cast<int128 *>(tlsf_malloc(instance, sizeof(int128)));
+        if (!i) { return -1; }
     }
-    for (int i = 0; i < 32; ++i) {
-        tlsf_free(instance, data128[i]);
+    for (auto &i : data128) {
+        tlsf_free(instance, i);
     }
 
     tlsf_destroy(instance);
