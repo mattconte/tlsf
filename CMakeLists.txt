@@ -18,9 +18,9 @@ add_library(wlib-tlsf ${TLSF_FILES})
 target_include_directories(wlib-tlsf PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
 target_compile_definitions(wlib-tlsf PRIVATE
     WLIB_TLSF_32BIT
-    WLIB_TLSF_LOG2_DIV=2
+    WLIB_TLSF_LOG2_DIV=3
     WLIB_TLSF_LOG2_ALIGN=2
-    WLIB_TLSF_LOG2_MAX=10
+    WLIB_TLSF_LOG2_MAX=12
     )
 
 file(GLOB_RECURSE TEST_FILES
