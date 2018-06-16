@@ -1,0 +1,41 @@
+pkg:
+  name: wlib-tlsf
+  description: TLSF memory allocator
+  repository: https://github.com/waterloop/wlib-tlsf.git
+  version: 1.0.2
+  author: Jeff Niu <jeffniu22@gmail.com> (https://github.com/mogball)
+  contributors: []
+  organization: Waterloop
+  keywords:
+  - wio
+  - c
+  - c++
+  - json
+  - waterloop
+  - memory
+  license: MIT
+  header_only: false
+  platform: ALL
+  framework:
+  - ALL
+  board:
+  - ALL
+  - mega2560
+  compile_flags: []
+  ide: none
+
+targets:
+  default: tests
+  create:
+    tests:
+      board: mega2560
+      target_compile_flags: []
+      pkg_compile_flags:
+      - -DWLIB_TLSF_16BIT
+      - -DWLIB_TLSF_LOG2_DIV=3
+      - -DWLIB_TLSF_LOG2_ALIGN=1
+      - -DWLIB_TLSF_LOG2_MAX=11
+      - -DWLIB_TLSF_PRINTF
+      - -DWLIB_TLSF_ASSERT
+
+dependencies: {}
