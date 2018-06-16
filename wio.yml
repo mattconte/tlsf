@@ -2,7 +2,7 @@ pkg:
   name: wlib-tlsf
   description: TLSF memory allocator
   repository: https://github.com/waterloop/wlib-tlsf.git
-  version: 1.0.1
+  version: 1.0.2
   author: Jeff Niu <jeffniu22@gmail.com> (https://github.com/mogball)
   contributors: []
   organization: Waterloop
