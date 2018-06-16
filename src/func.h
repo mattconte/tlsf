@@ -89,15 +89,15 @@ static void block_mark_as_used(block_header_t *block) {
 
 // Pointer arithmetic functions
 static tlsf_size_t align_up(tlsf_size_t x, tlsf_size_t align) {
-    tlsf_assert(0 == (align & (align - 1)), "Align must be power of two");
+    tlsf_assert(0 == (align & (align - 1)), "align_up: Align must be power of two");
     return (x + (align - 1)) & ~(align - 1);
 }
 static tlsf_size_t align_down(tlsf_size_t x, tlsf_size_t align) {
-    tlsf_assert(0 == (align & (align - 1)), "Align must be power of two");
+    tlsf_assert(0 == (align & (align - 1)), "align_down: Align must be power of two");
     return x - (x & (align - 1));
 }
 static void *align_ptr(const void *ptr, tlsf_size_t align) {
-    tlsf_assert(0 == (align & (align - 1)), "Align must be power of two");
+    tlsf_assert(0 == (align & (align - 1)), "align_ptr: Align must be power of two");
     const tlsf_ptr_t aligned = (tlsf_cast(tlsf_ptr_t, ptr) + (align - 1) & ~(align -1));
     return tlsf_cast(void *, aligned);
 }
