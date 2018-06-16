@@ -11,6 +11,10 @@ static char memory[2048];
 static tlsf_t instance;
 static pool_t pool;
 
+static char *string;
+static int counter;
+static int wrt;
+
 // Message handler
 void tlsf_printf(const char *fmt, ...) {
     static char buffer[256];
@@ -67,8 +71,16 @@ void setup() {
         trace << "Failed to allocate memory" << endl;
         return;
     }
+    tlsf_free(instance, ptr);
 }
 
 void loop() {
-    delay(100);
+    wrt = snprintf(nullptr, 0, "Count: %i\n", counter);
+    string = static_cast<char *>(tlsf_malloc(instance, wrt + 1));
+    snprintf(string, wrt + 1, "Count: %i\n", counter);
+    uart.write(string, wrt);
+    tlsf_free(instance, string);
+
+    delay(50);
+    counter += 16 * 16;
 }
