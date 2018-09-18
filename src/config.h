@@ -9,8 +9,18 @@
 #define TLSF_16BIT
 #endif
 
+#if !defined(TLSF_64BIT) && !defined(TLSF_64BIT) && !defined(WLIB_TLSF_32BIT)
+#if   WLIB_TLSF_ARCH == 16
+#define TLSF_16BIT
+#elif WLIB_TLSF_ARCH == 64
+#define TLSF_32BIT
+#elif WLIB_TLSF_ARCH != 32
+#error "WLIB_TLSF_ARCH must be one of 16, 32, or 64"
+#endif
+#endif
+
 #if defined(TLSF_64BIT) && defined(TLSF_16BIT)
-#error "Cannot defined both 64 and 16 bit"
+#error "Cannot define both 64 and 16 bit"
 #endif
 
 #if !defined(WLIB_TLSF_LOG2_DIV)
@@ -48,12 +58,12 @@ static_assert(WLIB_TLSF_LOG2_MAX >= 2, "Log2 max size must be at least 2");
 
 #include <stdint.h>
 
-#if defined(WLIB_TLSF_64BIT)
+#if defined(TLSF_64BIT)
 typedef uint64_t tlsf_size_t;
 typedef int64_t  tlsf_ptr_t;
 typedef uint32_t tlsf_uint_t;
 typedef int32_t  tlsf_int_t;
-#elif defined(WLIB_TLSF_16BIT)
+#elif defined(TLSF_16BIT)
 typedef uint16_t tlsf_size_t;
 typedef int16_t  tlsf_ptr_t;
 typedef uint16_t tlsf_uint_t;

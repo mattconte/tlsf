@@ -1,41 +1,46 @@
-pkg:
+type: pkg
+
+project:
   name: wlib-tlsf
-  description: TLSF memory allocator
-  repository: https://github.com/waterloop/wlib-tlsf.git
   version: 1.0.2
   author: Jeff Niu <jeffniu22@gmail.com> (https://github.com/mogball)
-  contributors: []
+  description: TLSF memory allocator
   organization: Waterloop
   keywords:
   - wio
+  - pkg
   - c
   - c++
-  - json
   - waterloop
   - memory
   license: MIT
-  header_only: false
-  platform: ALL
-  framework:
-  - ALL
-  board:
-  - ALL
-  - mega2560
-  compile_flags: []
-  ide: none
+  definitions:
+      singleton: false
+      required:
+        private:
+        - WLIB_TLSF_LOG2_DIV
+        - WLIB_TLSF_LOG2_ALIGN
+        - WLIB_TLSF_LOG2_MAX
+        - WLIB_TLSF_ARCH
+        optional:
+        - WLIB_TLSF_PRINTF
+        - WLIB_TLSF_ASSERT
+  compile_options:
+    wio_version: 0.4.0
+    default_target: tests
 
 targets:
-  default: tests
-  create:
-    tests:
-      board: mega2560
-      target_compile_flags: []
-      pkg_compile_flags:
-      - -DWLIB_TLSF_16BIT
-      - -DWLIB_TLSF_LOG2_DIV=3
-      - -DWLIB_TLSF_LOG2_ALIGN=1
-      - -DWLIB_TLSF_LOG2_MAX=11
-      - -DWLIB_TLSF_PRINTF
-      - -DWLIB_TLSF_ASSERT
+  tests:
+    src: tests
+    platform:  avr
+    framework: cosa
+    board: mega2560
+    definitions:
+      package:
+      - WLIB_TLSF_ARCH=16
+      - WLIB_TLSF_LOG2_DIV=3
+      - WLIB_TLSF_LOG2_ALIGN=1
+      - WLIB_TLSF_LOG2_MAX=11
+      - WLIB_TLSF_PRINTF
+      - WLIB_TLSF_ASSERT
 
-dependencies: {}
