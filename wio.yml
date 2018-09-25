@@ -2,9 +2,10 @@ type: pkg
 
 project:
   name: wlib-tlsf
+  description: TLSF memory allocator
+  repository: https://github.com/wloop/wlib-tlsf
   version: 1.0.3
   author: Jeff Niu <jeffniu22@gmail.com> (https://github.com/mogball)
-  description: TLSF memory allocator
   organization: Waterloop
   keywords:
   - wio
