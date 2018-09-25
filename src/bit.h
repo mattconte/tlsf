@@ -30,11 +30,7 @@ tlsf_decl tlsf_int_t tlsf_fls_sizet(tlsf_size_t size) {
 }
 #elif defined(TLSF_16BIT)
 tlsf_decl tlsf_int_t tlsf_fls_sizet(tlsf_size_t size) {
-    tlsf_uint_t high = tlsf_cast(tlsf_uint_t, size >> 16);
-    tlsf_int_t bits = 0;
-    if (high) { bits = tlsf_cast(tlsf_int_t, 16 + tlsf_fls(high)); }
-    else { bits = tlsf_fls(tlsf_cast(tlsf_uint_t, tlsf_cast(tlsf_int_t, size) & 0xffff)); }
-    return bits;
+    return tlsf_fls(tlsf_cast(tlsf_uint_t, tlsf_cast(tlsf_int_t, size) & 0xffff));
 }
 #else
 #define tlsf_fls_sizet tlsf_fls
