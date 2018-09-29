@@ -13,7 +13,7 @@
 #if   WLIB_TLSF_ARCH == 16
 #define TLSF_16BIT
 #elif WLIB_TLSF_ARCH == 64
-#define TLSF_32BIT
+#define TLSF_64BIT
 #elif WLIB_TLSF_ARCH != 32
 #error "WLIB_TLSF_ARCH must be one of 16, 32, or 64"
 #endif

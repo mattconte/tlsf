@@ -4,7 +4,7 @@ project:
   name: wlib-tlsf
   description: TLSF memory allocator
   repository: https://github.com/wloop/wlib-tlsf
-  version: 1.0.4
+  version: 1.0.5
   author: Jeff Niu <jeffniu22@gmail.com> (https://github.com/mogball)
   organization: Waterloop
   keywords:
