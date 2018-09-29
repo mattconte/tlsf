@@ -9,7 +9,7 @@ static tlsf_size_t block_size(const block_header_t *block) {
     constexpr tlsf_size_t mask = ~(BLOCK_FREE_BIT | PREV_FREE_BIT);
     return block->size & mask;
 }
-static tlsf_size_t block_set_size(block_header_t *block, tlsf_size_t size) {
+static void block_set_size(block_header_t *block, tlsf_size_t size) {
     constexpr tlsf_size_t mask = BLOCK_FREE_BIT | PREV_FREE_BIT;
     tlsf_size_t bits = block->size & mask;
     block->size = size | bits;
