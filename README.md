@@ -4,6 +4,12 @@ Two-level segregated-fit memory allocator package for WLib. Allocator created by
 
 Modified API for WLib.
 
+# Install
+
+```bash
+wio install wlib-tlsf
+```
+
 # API Usage
 
 The documentation is a little lacking on initialization but you essentially
@@ -75,13 +81,14 @@ void tlsf_assert(bool expr, const char *msg)
 Recommended settings are
 
 ```yaml
-pkg_compile_flags:
-- -DWLIB_TLSF_16BIT
-- -DWLIB_TLSF_LOG2_DIV=2
-- -DWLIB_TLSF_LOG2_ALIGN=1
-- -DWLIB_TLSF_LOG2_MAX=10
-- -DWLIB_TLSF_PRINTF
-- -DWLIB_TLSF_ASSERT
+definitions:
+  package:
+  - -DWLIB_TLSF_16BIT
+  - -DWLIB_TLSF_LOG2_DIV=2
+  - -DWLIB_TLSF_LOG2_ALIGN=1
+  - -DWLIB_TLSF_LOG2_MAX=10
+  - -DWLIB_TLSF_PRINTF
+  - -DWLIB_TLSF_ASSERT
 ```
 
 For boards will limited RAM.
