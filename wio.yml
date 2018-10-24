@@ -2,11 +2,12 @@ type: pkg
 
 project:
   name: wlib-tlsf
+  version: 1.0.6
+  organization: Waterloop
   description: TLSF memory allocator
   repository: https://github.com/wloop/wlib-tlsf
-  version: 1.0.5
+  license: MIT
   author: Jeff Niu <jeffniu22@gmail.com> (https://github.com/mogball)
-  organization: Waterloop
   keywords:
   - wio
   - pkg
@@ -14,26 +15,25 @@ project:
   - c++
   - waterloop
   - memory
-  license: MIT
-  definitions:
-      singleton: false
-      required:
-        private:
-        - WLIB_TLSF_LOG2_DIV
-        - WLIB_TLSF_LOG2_ALIGN
-        - WLIB_TLSF_LOG2_MAX
-        - WLIB_TLSF_ARCH
-        optional:
-        - WLIB_TLSF_PRINTF
-        - WLIB_TLSF_ASSERT
   compile_options:
-    wio_version: 0.4.0
+    wio_version: 0.6.0
     default_target: tests
+  definitions:
+    required:
+      private:
+      - WLIB_TLSF_LOG2_DIV
+      - WLIB_TLSF_LOG2_ALIGN
+      - WLIB_TLSF_LOG2_MAX
+      - WLIB_TLSF_ARCH
+    optional:
+      private:
+      - WLIB_TLSF_PRINTF
+      - WLIB_TLSF_ASSERT
 
 targets:
   tests:
     src: tests
-    platform:  avr
+    platform: avr
     framework: cosa
     board: mega2560
     definitions:
