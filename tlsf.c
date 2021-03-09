@@ -977,17 +977,18 @@ size_t tlsf_alloc_overhead(void)
 	return block_header_overhead;
 }
 
-pool_t tlsf_add_pool(tlsf_t tlsf, void* mem, size_t bytes)
+pool_t tlsf_extend_pool(tlsf_t tlsf, void* mem, size_t bytes, size_t incr)
 {
 	block_header_t* block;
 	block_header_t* next;
 
+	control_t* control = tlsf_cast(control_t*, tlsf);
 	const size_t pool_overhead = tlsf_pool_overhead();
 	const size_t pool_bytes = align_down(bytes - pool_overhead, ALIGN_SIZE);
 
 	if (((ptrdiff_t)mem % ALIGN_SIZE) != 0)
 	{
-		printf("tlsf_add_pool: Memory must be aligned by %u bytes.\n",
+		printf("tlsf_extend_pool: Memory must be aligned by %u bytes.\n",
 			(unsigned int)ALIGN_SIZE);
 		return 0;
 	}
@@ -995,27 +996,49 @@ pool_t tlsf_add_pool(tlsf_t tlsf, void* mem, size_t bytes)
 	if (pool_bytes < block_size_min || pool_bytes > block_size_max)
 	{
 #if defined (TLSF_64BIT)
-		printf("tlsf_add_pool: Memory size must be between 0x%x and 0x%x00 bytes.\n", 
+		printf("tlsf_extend_pool: Memory size must be between 0x%x and 0x%x00 bytes.\n", 
 			(unsigned int)(pool_overhead + block_size_min),
 			(unsigned int)((pool_overhead + block_size_max) / 256));
 #else
-		printf("tlsf_add_pool: Memory size must be between %u and %u bytes.\n", 
+		printf("tlsf_extend_pool: Memory size must be between %u and %u bytes.\n", 
 			(unsigned int)(pool_overhead + block_size_min),
 			(unsigned int)(pool_overhead + block_size_max));
 #endif
 		return 0;
 	}
 
-	/*
-	** Create the main free block. Offset the start of the block slightly
-	** so that the prev_phys_block field falls outside of the pool -
-	** it will never be used.
-	*/
-	block = offset_to_block(mem, -(tlsfptr_t)block_header_overhead);
-	block_set_size(block, pool_bytes);
-	block_set_free(block);
-	block_set_prev_used(block);
-	block_insert(tlsf_cast(control_t*, tlsf), block);
+	if (incr > 0 && incr < tlsf_block_size_min())
+	{
+		printf("tlsf_extend_pool: Increased size must be at least %u bytes.\n",
+			(unsigned int)tlsf_block_size_min());
+		return 0;
+	}
+
+	if (incr == 0) /* Initialize the pool */
+	{
+		/*
+		** Create the main free block. Offset the start of the block slightly
+		** so that the prev_phys_block field falls outside of the pool -
+		** it will never be used.
+		*/
+		block = offset_to_block(mem, -(tlsfptr_t)block_header_overhead);
+		block_set_size(block, pool_bytes);
+		block_set_free(block);
+		block_set_prev_used(block);
+		block_insert(control, block);
+	}
+	else /* Extend the pool */
+	{
+		/* Extend the sentinel block */
+		const size_t new_bytes = align_down((bytes + incr) -
+			(pool_overhead + pool_bytes) - block_header_overhead, ALIGN_SIZE);
+
+		block = offset_to_block(mem, pool_bytes);
+		block_set_size(block, new_bytes);
+		block_set_free(block);
+		block = block_merge_prev(control, block);
+		block_insert(control, block);
+	}
 
 	/* Split the block to create a zero-size sentinel block. */
 	next = block_link_next(block);
@@ -1024,6 +1047,11 @@ pool_t tlsf_add_pool(tlsf_t tlsf, void* mem, size_t bytes)
 	block_set_prev_free(next);
 
 	return mem;
+}
+
+pool_t tlsf_add_pool(tlsf_t tlsf, void* mem, size_t bytes)
+{
+	return tlsf_extend_pool(tlsf, mem, bytes, 0);
 }
 
 void tlsf_remove_pool(tlsf_t tlsf, pool_t pool)
