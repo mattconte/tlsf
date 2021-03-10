@@ -7,6 +7,10 @@
 
 #include "tlsf.h"
 
+#if !defined(_DEBUG)
+#define _DEBUG 0
+#endif
+
 #if defined(__cplusplus)
 #define tlsf_decl inline
 #else
