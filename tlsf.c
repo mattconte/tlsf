@@ -1234,8 +1234,13 @@ void* tlsf_realloc(tlsf_t tlsf, void* ptr, size_t size)
 		/*
 		** If the next block is used, or when combined with the current
 		** block, does not offer enough space, we must reallocate and copy.
+		** A request too large to satisfy (adjust == 0) fails.
 		*/
-		if (adjust > cursize && (!block_is_free(next) || adjust > combined))
+		if (adjust == 0)
+		{
+			p = 0;
+		}
+		else if (adjust > cursize && (!block_is_free(next) || adjust > combined))
 		{
 			p = tlsf_malloc(tlsf, size);
 			if (p)
