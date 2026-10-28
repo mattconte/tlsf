@@ -992,7 +992,7 @@ pool_t tlsf_add_pool(tlsf_t tlsf, void* mem, size_t bytes)
 		return 0;
 	}
 
-	if (pool_bytes < block_size_min || pool_bytes > block_size_max)
+	if (pool_bytes < block_size_min || pool_bytes >= block_size_max)
 	{
 #if defined (TLSF_64BIT)
 		printf("tlsf_add_pool: Memory size must be between 0x%x and 0x%x00 bytes.\n", 
